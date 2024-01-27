@@ -1,5 +1,9 @@
 const fs = require('node:fs');
+const path = require('node:path');
 const tmpl = require('nunjucks');
+const matter = require('gray-matter');
+const markdownit = require('markdown-it');
+const md = markdownit()
 
 tmpl.configure({ autoescape: true });
 let postDir = __dirname + '/posts';
@@ -32,17 +36,19 @@ let posts = [];
 for (let i = 0; i < postsFilenames.length; i++) {
     let postFilename = postsFilenames[i];
     let postFileContent = getFileContent(postDir + '/' + postFilename);
-    let pageContent = tmpl.render('layout.html', { content: postFileContent });
+    let fileBasenameWithoutExt = path.basename(postDir + '/' + postFilename, '.md');
 
-    const regexCreated = /"(\d{4}-\d{2}-\d{2})"/;
-    const postDateAsString = postFileContent.match(regexCreated)[1];
+    let postMatter = matter(postFileContent);
+    let postFileMdContent = md.render(postMatter.content);
 
-    const regexTitle = /<h1>(.*)<\/h1>/;
-    const postTitle = postFileContent.match(regexTitle)[1];
+    let pageContent = tmpl.render('layout.html', { content: postFileMdContent });
 
-    putFileContent(distDir + '/' + postFilename, pageContent);
+    const postDateAsString = postMatter.data.created.toLocaleDateString('de-de', { year:"numeric", month:"short", day:"numeric"})
+    const postTitle = postMatter.data.title;
 
-    posts.push({ created: postDateAsString, filename: postFilename, title: postTitle });
+    putFileContent(distDir + '/' + fileBasenameWithoutExt + '.html', pageContent);
+
+    posts.push({ created: postDateAsString, filename: fileBasenameWithoutExt + '.html', title: postTitle });
 }
 
 posts.sort((a, b) => a.created < b.created ? 1 : -1);
