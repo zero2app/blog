@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "gray-matter": "^4.0.3",
+    "markdown-it": "^14.0.0",
     "nunjucks": "^3.2.4"
   }
 }
