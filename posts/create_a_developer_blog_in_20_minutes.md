@@ -3,7 +3,7 @@ title: Create a developer blog in 20 minutes
 created: 2024-01-21
 ---
 
-For a real blog, we need a second page. Well, we could copy, paste & change our [first blog post]()</a>.
+For a real blog, we need a second page. Well, we could copy, paste & change our [first blog post]().
 
 But we just need a new `<article>`. The `<html>`, `<head>` and `<body>` will be the same.
 
