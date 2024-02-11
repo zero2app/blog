@@ -41,20 +41,22 @@ for (let i = 0; i < postsFilenames.length; i++) {
     let postMatter = matter(postFileContent);
     let postFileMdContent = md.render(postMatter.content);
 
-    let pageContent = tmpl.render('layout.html', { content: postFileMdContent });
-
-    const postDateAsString = postMatter.data.created.toLocaleDateString('de-de', { year:"numeric", month:"short", day:"numeric"})
+    const postDate = postMatter.data.created;
+    const postDateAsString = postDate.toLocaleDateString('de-de', { year: "numeric", month: "short", day: "numeric" })
     const postTitle = postMatter.data.title;
+
+    let postContent = tmpl.render('post.html', { content: postFileMdContent, created: postDateAsString, title: postTitle });
+    let pageContent = tmpl.render('layout.html', { content: postContent });
 
     putFileContent(distDir + '/' + fileBasenameWithoutExt + '.html', pageContent);
 
-    posts.push({ created: postDateAsString, filename: fileBasenameWithoutExt + '.html', title: postTitle });
+    posts.push({ created: postDate, createdAsString: postDateAsString, filename: fileBasenameWithoutExt + '.html', title: postTitle });
 }
 
 posts.sort((a, b) => a.created < b.created ? 1 : -1);
 for (let i = 0; i < posts.length; i++) {
     let post = posts[i];
-    indexContent = indexContent + post.created + ' <a href="' + post.filename + '">' + post.title + '</a><br/>\n';
+    indexContent = indexContent + post.createdAsString + ' <a href="' + post.filename + '">' + post.title + '</a><br/>\n';
 }
 
 let indexPageContent = tmpl.render('layout.html', { content: indexContent });
